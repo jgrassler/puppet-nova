@@ -141,7 +141,7 @@
 #   (optional) Directory where logs should be stored.
 #   If set to boolean false, it will not log to any directory.
 #   Defaults to '/var/log/nova'
-#
+
 # [*state_path*]
 #   (optional) Directory for storing state.
 #   Defaults to '/var/lib/nova'
@@ -174,6 +174,22 @@
 # [*log_facility*]
 #   (optional) Syslog facility to receive log lines.
 #   Defaults to 'LOG_USER'
+#
+# [*logging_context_format_string*]
+#   (optional) Format string to use for log messages with context.
+#   Defaults to undef
+#
+# [*logging_default_format_string*]
+#   (optional) Format string to use for log messages without context.
+#   Defaults to undef
+#
+# [*logging_debug_format_suffix*]
+#   (optional) Data to append to log format when level is DEBUG.
+#   Defaults to undef
+#
+# [*logging_exception_prefix*]
+#   (optional) Prefix each line of exception output with this format.
+#   Defaults to undef
 #
 # [*use_ssl*]
 #   (optional) Enable SSL on the API server
@@ -314,6 +330,10 @@ class nova(
   $monitoring_notifications = false,
   $use_syslog               = false,
   $log_facility             = 'LOG_USER',
+  $logging_context_format_string = undef,
+  $logging_default_format_string = undef,
+  $logging_debug_format_suffix = undef,
+  $logging_exception_prefix = undef,
   $install_utilities        = true,
   $mysql_module             = '0.9',
   $notification_driver      = [],
@@ -682,6 +702,32 @@ class nova(
       'DEFAULT/use_syslog':           value => false;
     }
   }
+
+  # Log format
+
+  if $logging_context_format_string {
+    nova_config {
+      'DEFAULT/logging_context_format_string' : value => $logging_context_format_string;
+      }
+    }
+
+  if $logging_default_format_string {
+    nova_config {
+      'DEFAULT/logging_default_format_string' : value => $logging_default_format_string;
+      }
+    }
+
+  if $logging_debug_format_suffix {
+    nova_config {
+      'DEFAULT/logging_debug_format_suffix' : value => $logging_debug_format_suffix;
+      }
+    }
+
+  if $logging_exception_prefix {
+    nova_config {
+      'DEFAULT/logging_exception_prefix' : value => $logging_exception_prefix;
+      }
+    }
 
   if $os_region_name {
     nova_config {
